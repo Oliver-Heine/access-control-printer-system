@@ -2,14 +2,12 @@ package com.dtu.printerservice.client;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
 
 import com.dtu.printerservice.operations.PrintServer;
-import com.dtu.printerservice.printer.PrinterStates;
 
 public class Servant extends UnicastRemoteObject implements RMIService {
 
-    private PrintServer printServer;
+    private final PrintServer printServer;
     private String printerName;
 
     public Servant() throws RemoteException {
@@ -60,8 +58,8 @@ public class Servant extends UnicastRemoteObject implements RMIService {
     }
 
     @Override
-    public String moveToTopOfQueue(String filename) throws RemoteException {
-        printServer.topQueue(filename);
+    public String moveToTopOfQueue(String filename, int jobId) throws RemoteException {
+        printServer.topQueue(filename, jobId);
         return "Moved to top of queue";
     }
 }

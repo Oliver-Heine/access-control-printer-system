@@ -13,36 +13,59 @@ public class client {
         RMIService service = (RMIService) Naming.lookup("rmi://localhost:5099/hello");
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Welcome to the Print Server, how might i be of service?");
-        System.out.println("(1) Print a file");
-        System.out.println("(2) Get printer status");
-        System.out.println("(3) Stop printer");
-        System.out.println("(4) Start printer");
-        System.out.println("(5) Restart printer");
-        System.out.println("(6) Get printer queue");
-        System.out.println("(7) Move print to top of queue");
-        System.out.println("(8) Move print to top of queue");
+        while (true) {
+            System.out.println("Welcome to the Print Server, how might i be of service?");
+            System.out.println("(1) Print a file");
+            System.out.println("(2) Get printer status");
+            System.out.println("(3) Stop printer");
+            System.out.println("(4) Start printer");
+            System.out.println("(5) Restart printer");
+            System.out.println("(6) Get printer queue");
+            System.out.println("(7) Move print to top of queue");
 
-        int selection = scanner.nextInt();
+            int selection = scanner.nextInt();
 
-        switch (selection){
-            case 1: {
-                System.out.println("Input filename:");
-                String filename = scanner.nextLine();
-                System.out.println("What printer would you like to use, Printer(1-3)?");
-                int printer = scanner.nextInt();
-                service.print(filename, "Printer" + printer);
-            }
-            case 2: {
-                System.out.println("Current printer state is: " + service.getState());
+            switch (selection) {
+                case 1: {
+                    scanner.nextLine();
+                    System.out.println("Input filename:");
+                    String filename = scanner.nextLine();
+                    System.out.println("What printer would you like to use, Printer(1-3)?");
+                    int printer = scanner.nextInt();
+                    service.print(filename, "Printer" + printer);
+                    break;
+                }
+                case 2: {
+                    System.out.println("Current printer status is: " + service.getState());
+                    break;
+                }
+                case 3: {
+                    System.out.println("Stopping printer: " + service.stop());
+                    break;
+                }
+                case 4: {
+                    System.out.println("Starting printer: " + service.start());
+                    break;
+                }
+                case 5: {
+                    System.out.println("Restarting printer: " + service.restart());
+                    break;
+                }
+                case 6: {
+                    System.out.println("Get printer queue: " + service.getQueue());
+                    break;
+                }
+                case 7: {
+                    System.out.println("What file would you like to move?");
+                    String filename = scanner.nextLine();
+                    System.out.println("Moving print to top: " + service.moveToTopOfQueue(filename, 1));
+                    break;
+                }
+                default: {
+                    System.out.println("Unknown option");
+                    break;
+                }
             }
         }
-
-
-        System.out.println(" Print Server is currently +" + service.getState();
-
-
-
-        System.out.println("--- " + service.echo("test") + "--- " + service.getClass().getName());
     }
 }

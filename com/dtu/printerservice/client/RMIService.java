@@ -11,6 +11,6 @@ public interface RMIService extends Remote {
     public String print(String filename, String printer) throws RemoteException;
     public String getState() throws RemoteException;
     public String restart() throws RemoteException;
-    public String getQueue() throws RemoteException
-    public String moveToTopOfQueue(String filename) throws RemoteException;
+    public String getQueue() throws RemoteException;
+    public String moveToTopOfQueue(String filename, int jobID) throws RemoteException;
 }
