@@ -6,6 +6,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.dtu.printerservice.authorization.Authorization;
+import com.dtu.printerservice.authorization.AuthorizationImpl;
+import com.dtu.printerservice.authorization.Role;
 import com.dtu.printerservice.users.User;
 
 import java.util.Date;
@@ -16,6 +19,8 @@ public class AuthenticationImpl implements Authentication {
     private final Algorithm algorithm;
     private final JWTVerifier verifier;
     private static AuthenticationImpl authenticationSingleton = null;
+
+    private Authorization authorization = new AuthorizationImpl();
 
     public static AuthenticationImpl getInstance() {
         if (authenticationSingleton == null) {
@@ -29,9 +34,23 @@ public class AuthenticationImpl implements Authentication {
         this.verifier = JWT.require(algorithm).build();
     }
 
-    public DecodedJWT AuthenticateUser(User user, String token) {
+    public DecodedJWT AuthenticateUser(Role role, String token) {
         //TODO Maybe extend this to a more complex flow. Maybe call the authorization class (not implemented)
-        return validateToken(token);
+        DecodedJWT decodedJWT = validateToken(token);
+        if(decodedJWT == null){
+            throw new RuntimeException("Invalid token");
+        }
+
+
+        if (!authorization.authorize(role, decodedJWT)) {
+            throw new RuntimeException("User not authorized");
+        }
+
+
+        return decodedJWT;
+
+
+
     }
 
     public String login(String username, String password) {
