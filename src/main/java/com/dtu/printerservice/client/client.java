@@ -10,14 +10,17 @@ import java.util.Scanner;
 
 public class client {
 
+    private static User currentUser = null;
     public static void main(String[] args) throws NotBoundException, MalformedURLException, RemoteException {
-        User currentUser = null;
-
         RMIService service = (RMIService) Naming.lookup("rmi://localhost:5099/hello");
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
             System.out.println("Welcome to the Print Server, how might I be of service?");
+            System.out.println("You must first login to the system");
+            userLogin();
+
+            System.out.println("Welcome " + currentUser.getName());
             System.out.println("(1) Print a file");
             System.out.println("(2) Get printer status");
             System.out.println("(3) Stop printer");
@@ -70,5 +73,17 @@ public class client {
                 }
             }
         }
+    }
+
+    private static boolean userLogin(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+        //TODO extend to validate login. See AuthenticationImpl.java
+        currentUser = new User(username, password, "Admin");
+
+        return true;
     }
 }

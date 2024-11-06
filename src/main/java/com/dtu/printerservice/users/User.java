@@ -5,7 +5,7 @@ public class User {
     private String role;
     private String token;
 
-    public User(String name, String role) {
+    public User(String name, String password, String role) {
         this.name = name;
         this.role = role;
     }
