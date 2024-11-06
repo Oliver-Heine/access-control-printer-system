@@ -15,15 +15,23 @@ public class AuthenticationImpl implements Authentication {
     private final String secretKey = "a-very-secrete-key";
     private final Algorithm algorithm;
     private final JWTVerifier verifier;
+    private static AuthenticationImpl authenticationSingleton = null;
 
-    public AuthenticationImpl() {
+    public static AuthenticationImpl getInstance() {
+        if (authenticationSingleton == null) {
+            authenticationSingleton = new AuthenticationImpl();
+        }
+        return authenticationSingleton;
+    }
+
+    private AuthenticationImpl() {
         this.algorithm = Algorithm.HMAC256(this.secretKey); // Use a secure key for signing tokens
         this.verifier = JWT.require(algorithm).build();
     }
 
-    public DecodedJWT AuthenticateUser(User user) {
+    public DecodedJWT AuthenticateUser(User user, String token) {
         //TODO Maybe extend this to a more complex flow. Maybe call the authorization class (not implemented)
-        return validateToken(user.getToken());
+        return validateToken(token);
     }
 
     public String login(String username, String password) {
