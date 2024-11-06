@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import com.dtu.printerservice.operations.PrintServer;
+import com.dtu.printerservice.users.User;
 
 public class Servant extends UnicastRemoteObject implements RMIService {
 
@@ -21,45 +22,45 @@ public class Servant extends UnicastRemoteObject implements RMIService {
     }
 
     @Override
-    public String start() throws RemoteException {
-        printServer.start();
+    public String start(User user) throws RemoteException {
+        printServer.start(user);
         return "started";
     }
 
     @Override
-    public String stop() throws RemoteException {
-        printServer.stop();
+    public String stop( User user) throws RemoteException {
+        printServer.stop(user);
         return "Stopped";
     }
 
     @Override
-    public String getState() throws RemoteException {
-        printServer.status(printerName);
+    public String getState(User user) throws RemoteException {
+        printServer.status(printerName, user);
         return "Stopped";
     }
 
     @Override
-    public String restart() throws RemoteException {
-        printServer.restart();
+    public String restart(User user) throws RemoteException {
+        printServer.restart(user);
         return "Restarted";
     }
 
     @Override
-    public String print(String filename, String printer) throws RemoteException {
+    public String print(String filename, String printer, User user) throws RemoteException {
         printerName = printer;
-        printServer.print(filename, printer);
+        printServer.print(filename, printer, user);
         return "Print queued";
     }
 
     @Override
-    public String getQueue() throws RemoteException {
-        printServer.queue(printerName);;
+    public String getQueue(User user) throws RemoteException {
+        printServer.queue(printerName, user);
         return "Queued";
     }
 
     @Override
-    public String moveToTopOfQueue(String filename, int jobId) throws RemoteException {
-        printServer.topQueue(filename, jobId);
+    public String moveToTopOfQueue(String filename, int jobId, User user) throws RemoteException {
+        printServer.topQueue(filename, jobId, user);
         return "Moved to top of queue";
     }
 }

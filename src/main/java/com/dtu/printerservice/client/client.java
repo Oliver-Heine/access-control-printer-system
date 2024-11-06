@@ -1,5 +1,7 @@
 package com.dtu.printerservice.client;
 
+import com.dtu.printerservice.users.User;
+
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -9,6 +11,7 @@ import java.util.Scanner;
 public class client {
 
     public static void main(String[] args) throws NotBoundException, MalformedURLException, RemoteException {
+        User currentUser = null;
 
         RMIService service = (RMIService) Naming.lookup("rmi://localhost:5099/hello");
         Scanner scanner = new Scanner(System.in);
@@ -32,33 +35,33 @@ public class client {
                     String filename = scanner.nextLine();
                     System.out.println("What printer would you like to use, Printer(1-3)?");
                     int printer = scanner.nextInt();
-                    service.print(filename, "Printer" + printer);
+                    service.print(filename, "Printer" + printer, currentUser);
                     break;
                 }
                 case 2: {
-                    System.out.println("Current printer status is: " + service.getState());
+                    System.out.println("Current printer status is: " + service.getState(currentUser));
                     break;
                 }
                 case 3: {
-                    System.out.println("Stopping printer: " + service.stop());
+                    System.out.println("Stopping printer: " + service.stop(currentUser));
                     break;
                 }
                 case 4: {
-                    System.out.println("Starting printer: " + service.start());
+                    System.out.println("Starting printer: " + service.start(currentUser));
                     break;
                 }
                 case 5: {
-                    System.out.println("Restarting printer: " + service.restart());
+                    System.out.println("Restarting printer: " + service.restart(currentUser));
                     break;
                 }
                 case 6: {
-                    System.out.println("Get printer queue: " + service.getQueue());
+                    System.out.println("Get printer queue: " + service.getQueue(currentUser));
                     break;
                 }
                 case 7: {
                     System.out.println("What file would you like to move?");
                     String filename = scanner.nextLine();
-                    System.out.println("Moving print to top: " + service.moveToTopOfQueue(filename, 1));
+                    System.out.println("Moving print to top: " + service.moveToTopOfQueue(filename, 1, currentUser));
                     break;
                 }
                 default: {
