@@ -14,7 +14,7 @@ public class client {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Welcome to the Print Server, how might i be of service?");
+            System.out.println("Welcome to the Print Server, how might I be of service?");
             System.out.println("(1) Print a file");
             System.out.println("(2) Get printer status");
             System.out.println("(3) Stop printer");

@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+}
+
+group = "com.dtu.printerservice"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.auth0:java-jwt:4.4.0'
+}
+
