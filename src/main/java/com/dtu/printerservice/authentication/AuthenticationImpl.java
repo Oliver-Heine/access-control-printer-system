@@ -10,8 +10,25 @@ import com.dtu.printerservice.authorization.Authorization;
 import com.dtu.printerservice.authorization.AuthorizationImpl;
 import com.dtu.printerservice.authorization.Role;
 import com.dtu.printerservice.users.User;
+import com.dtu.printerservice.users.UserDTO;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.Date;
+import javax.crypto.spec.PBEKeySpec;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.KeySpec;
+import java.util.*;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 public class AuthenticationImpl implements Authentication {
     private final int EXPIRATION_TIME_MILLIS = 60000;
@@ -49,6 +66,7 @@ public class AuthenticationImpl implements Authentication {
 
     public String login(String username, String password) {
         if (validateCredentials(username, password)) {
+            System.out.println("User logged in");
             //TODO: Something where we can get and validate the login of the user. Perhaps fetch or create the user object somehow.
             User user = new User((username), "BASIC"  );
             String token = JWTTokenIssuer(user);
@@ -58,8 +76,12 @@ public class AuthenticationImpl implements Authentication {
         }
     }
 
+    public void newUser(String username, String password) {
+        createUser(username, password);
+    }
+
     private boolean validateCredentials(String username, String password) {
-        return true; //update to actually validate username and password
+        return validatePassword(username, password);
     }
 
     private String JWTTokenIssuer(User user){
@@ -83,4 +105,120 @@ public class AuthenticationImpl implements Authentication {
             return null; // Make it call a re-login if the token has expired
         }
     }
+
+    private UserDTO encrypt(String password, byte[] salt) {
+        SecureRandom random = new SecureRandom();
+        if (salt == null) {
+            salt = new byte[16];
+            random.nextBytes(salt);
+        }
+
+
+        byte[] hash = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(salt);
+            hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("Encryption failed with: " + e);
+        }
+
+        if (hash == null) {
+            System.out.println("Password could not be hashed");
+            return null;
+        }
+        UserDTO userDTO = new UserDTO();
+
+        userDTO.setSalt(salt);
+        userDTO.setPassword(hash);
+
+        return userDTO;
+
+    }
+
+    private void createUser(String username, String password) {
+
+        UserDTO userDTO = encrypt(password, null);
+
+        userDTO.setRole("User");
+        userDTO.setName(username);
+
+        Map<String, UserDTO> passwords = loadPasswords();
+
+        passwords.put(username, userDTO);
+
+        savePasswords(passwords);
+    }
+
+    private static final String fileName = "C:\\Users\\Marcu\\IdeaProjects\\access-control-printer-system\\src\\main\\resources\\passwords.txt";
+    private static Map<String, UserDTO> loadPasswords() {
+        Map<String, UserDTO> users = new HashMap<>();
+        try {
+            String content = new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
+            JSONObject json = new JSONObject(content);
+            for (String username : json.keySet()) {
+                UserDTO user = new UserDTO();
+
+                JSONObject userData = json.getJSONObject(username);
+                ObjectMapper objectMapper = new ObjectMapper();
+                user.setPasswordBase64(userData.getString("password"));
+                user.setName(username);
+                user.setRole(userData.getString("role"));
+                user.setSaltBase64(userData.getString("salt"));
+                //user.setSalt(objectMapper.writeValueAsBytes(userData.getJSONArray("salt")));
+
+                users.put(username, user);
+            }
+        } catch (IOException | JSONException e) {
+            System.out.println("File not found: " + e);
+        }
+        return users;
+    }
+
+    private boolean validatePassword(String username, String password) {
+        Map<String, UserDTO> users = loadPasswords();
+        UserDTO userForLogin = users.get(username);
+
+        UserDTO userPasswordEncrypted = encrypt(password, userForLogin.getSalt());
+
+        if(userPasswordEncrypted == null) System.out.println("Encrypted password is null");
+
+        return Arrays.equals(userForLogin.getPassword(), userPasswordEncrypted.getPassword());
+    }
+
+//    private static void savePasswords(Map<String, UserDTO> passwords) {
+//        JSONObject json = new JSONObject(passwords);
+//        try (Writer writer = new FileWriter(fileName)) {
+//            writer.write(json.toString(4));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+    private static void savePasswords(Map<String, UserDTO> passwords) {
+        JSONObject json = new JSONObject();
+        for (Map.Entry<String, UserDTO> entry : passwords.entrySet()) {
+            JSONObject userJson = new JSONObject();
+            userJson.put("password", entry.getValue().getPasswordBase64());
+            userJson.put("salt", entry.getValue().getSaltBase64());
+            userJson.put("role", entry.getValue().getRole());
+            userJson.put("name", entry.getValue().getName());
+            json.put(entry.getKey(), userJson);
+        }
+        try (Writer writer = new FileWriter(fileName)) {
+            writer.write(json.toString(4));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 }

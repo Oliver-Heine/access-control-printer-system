@@ -1,27 +1,31 @@
 package com.dtu.printerservice.client;
 
+import com.dtu.printerservice.authentication.AuthenticationImpl;
 import com.dtu.printerservice.users.User;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class client {
 
     private static User currentUser = null;
+    private static final AuthenticationImpl authentication = new AuthenticationImpl();
     private static String token = null; //This represents a web cookie
 
     public static void main(String[] args) throws NotBoundException, MalformedURLException, RemoteException {
         RMIService service = (RMIService) Naming.lookup("rmi://localhost:5099/hello");
         Scanner scanner = new Scanner(System.in);
 
-        while (true) {
-            System.out.println("Welcome to the Print Server, how might I be of service?");
-            System.out.println("You must first login to the system");
-            userLogin();
+        System.out.println("Welcome to the Print Server, how might I be of service?");
+        System.out.println("You must first login to the system");
+        userLogin();
 
+
+        while (true) {
             System.out.println("Welcome " + currentUser.getName());
             System.out.println("(1) Print a file");
             System.out.println("(2) Get printer status");
@@ -81,8 +85,23 @@ public class client {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
+
+        if (Objects.equals(username, "8")) {
+            System.out.print("Enter username: ");
+            username = scanner.nextLine();
+            System.out.print("Enter password: ");
+            String password = scanner.nextLine();
+            authentication.newUser(username, password);
+            authentication.login(username, password);
+        } else {
+            System.out.print("Enter password: ");
+            String password = scanner.nextLine();
+
+            authentication.login(username, password);
+        }
+
+
+
 
         //TODO extend to validate login. See AuthenticationImpl.java
         currentUser = new User(username, "Admin");
