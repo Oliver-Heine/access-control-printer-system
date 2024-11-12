@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class client {
 
     private static User currentUser = null;
-    private static final AuthenticationImpl authentication = new AuthenticationImpl();
+    private static final AuthenticationImpl authentication = AuthenticationImpl.getInstance();
     private static String token = null; //This represents a web cookie
 
     public static void main(String[] args) throws NotBoundException, MalformedURLException, RemoteException {
