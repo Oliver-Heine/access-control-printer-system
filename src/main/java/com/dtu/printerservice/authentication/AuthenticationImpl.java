@@ -40,23 +40,19 @@ public class AuthenticationImpl implements Authentication {
         if(decodedJWT == null){
             throw new RuntimeException("Invalid token");
         }
-
-
         if (!authorization.authorize(role, decodedJWT)) {
             throw new RuntimeException("User not authorized");
         }
 
-
         return decodedJWT;
-
-
-
     }
 
     public String login(String username, String password) {
         if (validateCredentials(username, password)) {
             //TODO: Something where we can get and validate the login of the user. Perhaps fetch or create the user object somehow.
-            return JWTTokenIssuer(null); //TODO Potentially update it with the result of the above TODO
+            User user = new User((username), "BASIC"  );
+            String token = JWTTokenIssuer(user);
+            return token; //TODO Potentially update it with the result of the above TODO
         } else {
             throw new RuntimeException("Invalid username or password");
         }
