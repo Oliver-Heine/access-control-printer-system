@@ -5,5 +5,5 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 public interface Authorization {
 
-    Boolean authorize(Role role, DecodedJWT Token);
+    Boolean authorize(Role role, String actionName);
 }

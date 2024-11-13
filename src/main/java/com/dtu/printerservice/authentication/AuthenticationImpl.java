@@ -49,13 +49,13 @@ public class AuthenticationImpl implements Authentication {
         this.verifier = JWT.require(algorithm).build();
     }
 
-    public DecodedJWT AuthenticateUser(Role role, String token) {
+    public DecodedJWT AuthenticateUser(Role role, String token, String action) {
         //TODO Maybe extend this to a more complex flow. Maybe call the authorization class (not implemented)
         DecodedJWT decodedJWT = validateToken(token);
         if(decodedJWT == null){
             throw new RuntimeException("Invalid token");
         }
-        if (!authorization.authorize(role, decodedJWT)) {
+        if (!authorization.authorize(role, action)) {
             throw new RuntimeException("User not authorized");
         }
 

@@ -2,13 +2,23 @@ package com.dtu.printerservice.authorization;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 
+import java.util.Arrays;
+
 
 public class AuthorizationImpl implements Authorization{
+
+
+
     @Override
-    public Boolean authorize(Role role, DecodedJWT token) {
+    public Boolean authorize(Role role, String actionName) {
 
-        String roleClaim = token.getClaim("Role").asString();
+        Action action = Action.valueOf(actionName);
 
-        return roleClaim.equals(role.getRole());
+
+        return Arrays.asList(role.getPermissions()).contains(action);
+
     }
+
+
+
 }
