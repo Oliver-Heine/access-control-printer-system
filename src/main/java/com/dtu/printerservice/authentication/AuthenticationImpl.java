@@ -66,10 +66,10 @@ public class AuthenticationImpl implements Authentication {
 
     public String login(String username, String password) {
         loadPasswords();
-        if (validateCredentials(username, password)) {
+        User user = validateCredentials(username, password);
+        if (user != null) {
             System.out.println("User logged in");
             //TODO: Something where we can get and validate the login of the user. Perhaps fetch or create the user object somehow.
-            User user = new User((username), "BASIC"  );
             String token = JWTTokenIssuer(user);
             return token; //TODO Potentially update it with the result of the above TODO
         } else {
@@ -81,7 +81,7 @@ public class AuthenticationImpl implements Authentication {
         createUser(username, password);
     }
 
-    private boolean validateCredentials(String username, String password) {
+    private User validateCredentials(String username, String password) {
         return validatePassword(username, password);
     }
 
@@ -92,6 +92,30 @@ public class AuthenticationImpl implements Authentication {
                 .withClaim("UserName", user.getName())
                 .withClaim("Role", user.getRole())
                 .sign(this.algorithm);
+    }
+
+    public String getRole(String token) {
+        DecodedJWT decodedJWT = validateToken(token);
+        if (decodedJWT == null) {
+            throw new RuntimeException("Invalid token");
+        }
+        return decodedJWT.getClaim("Role").asString();
+    }
+
+    public String getUserName(String token) {
+        DecodedJWT decodedJWT = validateToken(token);
+        if (decodedJWT == null) {
+            throw new RuntimeException("Invalid token");
+        }
+        return decodedJWT.getClaim("UserName").asString();
+    }
+
+    public User getCurrentUser(String token) {
+        DecodedJWT decodedJWT = validateToken(token);
+        if (decodedJWT == null) {
+            throw new RuntimeException("Invalid token");
+        }
+        return new User(decodedJWT.getClaim("UserName").asString(), decodedJWT.getClaim("Role").asString());
     }
 
     private DecodedJWT validateToken(String token) {
@@ -175,17 +199,19 @@ public class AuthenticationImpl implements Authentication {
         return users;
     }
 
-    private boolean validatePassword(String username, String password) {
+    private User validatePassword(String username, String password) {
         Map<String, UserDTO> users = loadPasswords();
         UserDTO userForLogin = users.get(username);
         if (userForLogin == null) {
-            return false;
+            return null;
         }
         UserDTO userPasswordEncrypted = encrypt(password, userForLogin.getSalt());
 
         if(userPasswordEncrypted == null) System.out.println("Encrypted password is null");
 
-        return Arrays.equals(userForLogin.getPassword(), userPasswordEncrypted.getPassword());
+        if (Arrays.equals(userForLogin.getPassword(), userPasswordEncrypted.getPassword())) {
+            return new User(username, userForLogin.getRole());
+        } else return null;
     }
 
     private void savePasswords(Map<String, UserDTO> passwords) {

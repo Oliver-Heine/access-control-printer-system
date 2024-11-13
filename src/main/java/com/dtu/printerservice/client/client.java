@@ -14,7 +14,6 @@ import java.util.Scanner;
 
 public class client {
 
-    private static User currentUser = null;
     private static final AuthenticationImpl authentication = AuthenticationImpl.getInstance();
     private static String token = null; //This represents a web cookie
 
@@ -28,7 +27,7 @@ public class client {
 
 
         while (true) {
-            System.out.println("Welcome " + currentUser.getName());
+            System.out.println("Welcome " + authentication.getUserName(token));
             System.out.println("(1) Print a file");
             System.out.println("(2) Get printer status");
             System.out.println("(3) Stop printer");
@@ -46,33 +45,33 @@ public class client {
                     String filename = scanner.nextLine();
                     System.out.println("What printer would you like to use, Printer(1-3)?");
                     int printer = scanner.nextInt();
-                    service.print(filename, "Printer" + printer, currentUser, token);
+                    service.print(filename, "Printer" + printer, authentication.getCurrentUser(token), token);
                     break;
                 }
                 case 2: {
-                    System.out.println("Current printer status is: " + service.getState(currentUser, token));
+                    System.out.println("Current printer status is: " + service.getState(authentication.getCurrentUser(token), token));
                     break;
                 }
                 case 3: {
-                    System.out.println("Stopping printer: " + service.stop(currentUser, token));
+                    System.out.println("Stopping printer: " + service.stop(authentication.getCurrentUser(token), token));
                     break;
                 }
                 case 4: {
-                    System.out.println("Starting printer: " + service.start(currentUser, token));
+                    System.out.println("Starting printer: " + service.start(authentication.getCurrentUser(token), token));
                     break;
                 }
                 case 5: {
-                    System.out.println("Restarting printer: " + service.restart(currentUser, token));
+                    System.out.println("Restarting printer: " + service.restart(authentication.getCurrentUser(token), token));
                     break;
                 }
                 case 6: {
-                    System.out.println("Get printer queue: " + service.getQueue(currentUser, token));
+                    System.out.println("Get printer queue: " + service.getQueue(authentication.getCurrentUser(token), token));
                     break;
                 }
                 case 7: {
                     System.out.println("What file would you like to move?");
                     String filename = scanner.nextLine();
-                    System.out.println("Moving print to top: " + service.moveToTopOfQueue(filename, 1, currentUser, token));
+                    System.out.println("Moving print to top: " + service.moveToTopOfQueue(filename, 1, authentication.getCurrentUser(token), token));
                     break;
                 }
                 default: {
@@ -94,19 +93,12 @@ public class client {
             System.out.print("Enter password: ");
             String password = scanner.nextLine();
             authentication.newUser(username, password);
-            authentication.login(username, password);
+            token = authentication.login(username, password);
         } else {
             System.out.print("Enter password: ");
             String password = scanner.nextLine();
-
-            authentication.login(username, password);
+            token = authentication.login(username, password);
         }
-
-
-
-
-        //TODO extend to validate login. See AuthenticationImpl.java
-        currentUser = new User(username, "Admin");
 
         return true;
     }
