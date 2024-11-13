@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0da4aa03-89d1-43b4-8369-4b1b06ed7594" name="Changes" comment="Added login" />
+    <list default="true" id="0da4aa03-89d1-43b4-8369-4b1b06ed7594" name="Changes" comment="Added gitignore">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -71,6 +73,11 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
   <component name="RunManager" selected="Application.client">
     <configuration name="client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.dtu.printerservice.client.client" />
@@ -99,6 +106,16 @@
     <configuration default="true" type="LiferayDockerServerConfiguration" factoryName="Liferay Docker Server">
       <option name="passParentEnvironments" value="true" />
       <option name="workspaceLocation" value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="LiferayServerConfiguration" factoryName="Liferay Server">
+      <Liferay-Sever alternativeJrePath="" bundleLocation="" bundleType="" developerMode="true" gogoShellPort="11311" vmParameters="-Xmx2560m -XX:MaxMetaspaceSize=768m -XX:MetaspaceSize=768m">
+        <envs>
+          <env name="PATH" value="$USER_HOME$/.jdks/openjdk-17.0.2/bin:$USER_HOME$/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:$USER_HOME$/.dotnet/tools" />
+          <env name="JAVA_HOME" value="$USER_HOME$/.jdks/openjdk-17.0.2" />
+        </envs>
+        <module name="access-control-printer-system" />
+      </Liferay-Sever>
       <method v="2" />
     </configuration>
     <recent_temporary>
@@ -149,7 +166,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731356811541</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added gitignore">
+      <option name="closed" value="true" />
+      <created>1731500228005</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1731500228005</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -169,7 +194,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added the rest of the switch cases" />
     <MESSAGE value="Added login" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added login" />
+    <MESSAGE value="Added gitignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added gitignore" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
