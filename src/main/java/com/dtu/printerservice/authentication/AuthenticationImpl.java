@@ -9,22 +9,19 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.dtu.printerservice.authorization.Authorization;
 import com.dtu.printerservice.authorization.AuthorizationImpl;
 import com.dtu.printerservice.authorization.Role;
+import com.dtu.printerservice.client.client;
 import com.dtu.printerservice.users.User;
 import com.dtu.printerservice.users.UserDTO;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.crypto.spec.PBEKeySpec;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.spec.KeySpec;
 import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -111,22 +108,15 @@ public class AuthenticationImpl implements Authentication {
         return decodedJWT.getClaim("UserName").asString();
     }
 
-    public User getCurrentUser(String token) {
-        DecodedJWT decodedJWT = validateToken(token);
-        if (decodedJWT == null) {
-            throw new RuntimeException("Invalid token");
-        }
-        return new User(decodedJWT.getClaim("UserName").asString(), decodedJWT.getClaim("Role").asString());
-    }
-
     private DecodedJWT validateToken(String token) {
         try {
             return verifier.verify(token);
         } catch (JWTVerificationException e) {
             if (e instanceof TokenExpiredException){
-                System.err.println("Token is expired");
+                System.out.println("Token is expired");
+                client.userLogin();
             } else {
-                System.err.println("Invalid token: " + e.getMessage());
+                System.out.println("Invalid token: " + e.getMessage());
             }
             return null; // Make it call a re-login if the token has expired
         }

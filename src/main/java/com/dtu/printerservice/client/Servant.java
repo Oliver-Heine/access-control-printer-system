@@ -22,45 +22,57 @@ public class Servant extends UnicastRemoteObject implements RMIService {
     }
 
     @Override
-    public String start(User user, String token) throws RemoteException {
-        printServer.start(user, token);
+    public String start(String token) throws RemoteException {
+        printServer.start(token);
         return "started";
     }
 
     @Override
-    public String stop( User user, String token) throws RemoteException {
-        printServer.stop(user, token);
+    public String stop(String token) throws RemoteException {
+        printServer.stop(token);
         return "Stopped";
     }
 
     @Override
-    public String getState(User user, String token) throws RemoteException {
-        printServer.status(printerName, user, token);
+    public String getState(String token) throws RemoteException {
+        printServer.status(printerName, token);
         return "Stopped";
     }
 
     @Override
-    public String restart(User user, String token) throws RemoteException {
-        printServer.restart(user, token);
+    public String restart(String token) throws RemoteException {
+        printServer.restart(token);
         return "Restarted";
     }
 
     @Override
-    public String print(String filename, String printer, User user, String token) throws RemoteException {
+    public String print(String filename, String printer, String token) throws RemoteException {
         printerName = printer;
-        printServer.print(filename, printer, user, token);
+        printServer.print(filename, printer, token);
         return "Print queued";
     }
 
     @Override
-    public String getQueue(User user, String token) throws RemoteException {
-        printServer.queue(printerName, user, token);
+    public String getQueue(String token) throws RemoteException {
+        printServer.queue(printerName, token);
         return "Queued";
     }
 
     @Override
-    public String moveToTopOfQueue(String filename, int jobId, User user, String token) throws RemoteException {
-        printServer.topQueue(filename, jobId, user, token);
+    public String moveToTopOfQueue(String filename, int jobId, String token) throws RemoteException {
+        printServer.topQueue(filename, jobId, token);
+        return "Moved to top of queue";
+    }
+
+    @Override
+    public String readConfig(String token) throws RemoteException {
+        printServer.readConfig(token);
+        return "Moved to top of queue";
+    }
+
+    @Override
+    public String setConfig(String token) throws RemoteException {
+        printServer.setConfig(token);
         return "Moved to top of queue";
     }
 }
