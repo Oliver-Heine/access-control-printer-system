@@ -7,8 +7,8 @@ public class AuthorizationImpl implements Authorization{
     @Override
     public Boolean authorize(Role role, DecodedJWT token) {
 
-        int claim = token.getClaim("Role").asInt();
+        String roleClaim = token.getClaim("Role").asString();
 
-        return claim >= role.getRole();
+        return roleClaim.equals(role.getRole());
     }
 }

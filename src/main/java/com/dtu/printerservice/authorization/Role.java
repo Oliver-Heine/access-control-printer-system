@@ -2,15 +2,15 @@ package com.dtu.printerservice.authorization;
 
 public enum Role {
 
-    ADMIN(3), ELEVATED(2), BASIC(1);
+    ADMIN("ADMIN"), JANITOR("JANITOR"), SUPERUSER("SUPERUSER"), BASIC("BASIC");
 
-    private int role;
+    private String role;
 
-    Role(int role) {
+    Role(String role) {
         this.role = role;
     }
 
-    public int getRole() {
+    public String getRole() {
         return role;
     }
 

@@ -12,8 +12,6 @@ public class PrintServer implements PrinterOperations {
 
     @Override
     public void print(String filename, String printerName, User user, String token) {
-
-
         try {
             authentication.AuthenticateUser(Role.BASIC, token);
             System.out.println("print called by user: XYZ");
@@ -28,7 +26,7 @@ public class PrintServer implements PrinterOperations {
         try {
 
 
-            authentication.AuthenticateUser(Role.ELEVATED, token);
+            authentication.AuthenticateUser(Role.SUPERUSER, token);
             System.out.println("queue called by user: XYZ");
         } catch (Exception e) {
             System.out.println("Authentication failed: " + e.getMessage());
@@ -41,7 +39,7 @@ public class PrintServer implements PrinterOperations {
         try {
 
 
-        authentication.AuthenticateUser(Role.ELEVATED, token);
+        authentication.AuthenticateUser(Role.SUPERUSER, token);
         System.out.println("topQueue called by user: XYZ");
         } catch (Exception e) {
             System.out.println("Authentication failed: " + e.getMessage());
@@ -77,8 +75,6 @@ public class PrintServer implements PrinterOperations {
     @Override
     public void restart(User user, String token) {
         try {
-
-
         authentication.AuthenticateUser(Role.ADMIN, token);
         System.out.println("restart called by user: XYZ");
         } catch (Exception e) {
