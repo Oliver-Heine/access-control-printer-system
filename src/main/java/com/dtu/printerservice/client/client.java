@@ -3,7 +3,9 @@ package com.dtu.printerservice.client;
 import com.dtu.printerservice.authentication.AuthenticationImpl;
 import com.dtu.printerservice.users.User;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;

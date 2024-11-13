@@ -65,6 +65,7 @@ public class AuthenticationImpl implements Authentication {
     }
 
     public String login(String username, String password) {
+        loadPasswords();
         if (validateCredentials(username, password)) {
             System.out.println("User logged in");
             //TODO: Something where we can get and validate the login of the user. Perhaps fetch or create the user object somehow.
@@ -150,11 +151,10 @@ public class AuthenticationImpl implements Authentication {
         savePasswords(passwords);
     }
 
-    private static final String fileName = "C:\\Users\\Marcu\\IdeaProjects\\access-control-printer-system\\src\\main\\resources\\passwords.txt";
-    private static Map<String, UserDTO> loadPasswords() {
+    private Map<String, UserDTO> loadPasswords() {
         Map<String, UserDTO> users = new HashMap<>();
         try {
-            String content = new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
+            String content = new String(this.getClass().getResourceAsStream("/passwords.txt").readAllBytes(), StandardCharsets.UTF_8);
             JSONObject json = new JSONObject(content);
             for (String username : json.keySet()) {
                 UserDTO user = new UserDTO();
@@ -178,7 +178,9 @@ public class AuthenticationImpl implements Authentication {
     private boolean validatePassword(String username, String password) {
         Map<String, UserDTO> users = loadPasswords();
         UserDTO userForLogin = users.get(username);
-
+        if (userForLogin == null) {
+            return false;
+        }
         UserDTO userPasswordEncrypted = encrypt(password, userForLogin.getSalt());
 
         if(userPasswordEncrypted == null) System.out.println("Encrypted password is null");
@@ -186,16 +188,7 @@ public class AuthenticationImpl implements Authentication {
         return Arrays.equals(userForLogin.getPassword(), userPasswordEncrypted.getPassword());
     }
 
-//    private static void savePasswords(Map<String, UserDTO> passwords) {
-//        JSONObject json = new JSONObject(passwords);
-//        try (Writer writer = new FileWriter(fileName)) {
-//            writer.write(json.toString(4));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    private static void savePasswords(Map<String, UserDTO> passwords) {
+    private void savePasswords(Map<String, UserDTO> passwords) {
         JSONObject json = new JSONObject();
         for (Map.Entry<String, UserDTO> entry : passwords.entrySet()) {
             JSONObject userJson = new JSONObject();
@@ -205,7 +198,7 @@ public class AuthenticationImpl implements Authentication {
             userJson.put("name", entry.getValue().getName());
             json.put(entry.getKey(), userJson);
         }
-        try (Writer writer = new FileWriter(fileName)) {
+        try (Writer writer = new FileWriter(getClass().getClassLoader().getResource("passwords.txt").getFile())) {
             writer.write(json.toString(4));
         } catch (IOException e) {
             e.printStackTrace();
