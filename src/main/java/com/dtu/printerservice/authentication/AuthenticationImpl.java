@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AuthenticationImpl implements Authentication {
     private static AuthenticationImpl authenticationSingleton = null;
 
-    private final int EXPIRATION_TIME_MILLIS = 300000;
+    private final int EXPIRATION_TIME_MILLIS = 60000;
     private final String secretKey = "a-very-secrete-key";
     private final Algorithm algorithm;
     private final JWTVerifier verifier;

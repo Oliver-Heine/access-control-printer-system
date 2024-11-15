@@ -1,7 +1,5 @@
 package com.dtu.printerservice.authentication;
 
-import com.dtu.printerservice.authorization.Role;
-
 public interface Authentication {
     void AuthenticateUser(String token, String action);
     String login(String username, String password);
