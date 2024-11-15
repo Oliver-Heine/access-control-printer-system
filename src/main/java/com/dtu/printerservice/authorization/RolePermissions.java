@@ -1,8 +1,6 @@
 package com.dtu.printerservice.authorization;
 
 public class RolePermissions {
-
-
     public static final Action[] ADMIN_PERMISSIONS = new Action[] {
             Action.PRINT,
             Action.QUEUE,
@@ -28,8 +26,6 @@ public class RolePermissions {
             Action.QUEUE,
             Action.TOP_QUEUE,
             Action.RESTART
-
-
     };
 
     public static final Action[] BASIC_PERMISSIONS = new Action[] {

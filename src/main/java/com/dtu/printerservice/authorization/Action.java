@@ -1,7 +1,5 @@
 package com.dtu.printerservice.authorization;
 
-import com.dtu.printerservice.users.User;
-
 public enum Action {
 
     PRINT("PRINT"),

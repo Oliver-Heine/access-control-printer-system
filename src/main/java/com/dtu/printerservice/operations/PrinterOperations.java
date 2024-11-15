@@ -1,7 +1,5 @@
 package com.dtu.printerservice.operations;
 
-import com.dtu.printerservice.users.User;
-
 public interface PrinterOperations {
     /**
      * prints file filename on the specified printer

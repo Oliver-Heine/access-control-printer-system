@@ -9,7 +9,9 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.dtu.printerservice.authorization.Authorization;
 import com.dtu.printerservice.authorization.AuthorizationImpl;
 import com.dtu.printerservice.authorization.Role;
-import com.dtu.printerservice.client.client;
+import com.dtu.printerservice.exceptions.InvalidTokenException;
+import com.dtu.printerservice.exceptions.UnauthenticatedException;
+import com.dtu.printerservice.exceptions.UnauthorizedException;
 import com.dtu.printerservice.users.User;
 import com.dtu.printerservice.users.UserDTO;
 import org.json.JSONException;
@@ -30,7 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AuthenticationImpl implements Authentication {
     private static AuthenticationImpl authenticationSingleton = null;
 
-    private final int EXPIRATION_TIME_MILLIS = 600000;
+    private final int EXPIRATION_TIME_MILLIS = 60000;
     private final String secretKey = "a-very-secrete-key";
     private final Algorithm algorithm;
     private final JWTVerifier verifier;
@@ -49,32 +51,27 @@ public class AuthenticationImpl implements Authentication {
         this.verifier = JWT.require(algorithm).build();
     }
 
-    public DecodedJWT AuthenticateUser(Role role, String token, String action) {
-        //TODO Maybe extend this to a more complex flow. Maybe call the authorization class (not implemented)
-        DecodedJWT decodedJWT = validateToken(token);
-        if(decodedJWT == null){
-            throw new RuntimeException("Invalid token");
-        }
+    @Override
+    public void AuthenticateUser(Role role, String token, String action) {
+        validateToken(token);
         if (!authorization.authorize(role, action)) {
-            throw new RuntimeException("User not authorized");
+            throw new UnauthorizedException("User not authorized");
         }
-
-        return decodedJWT;
     }
 
+    @Override
     public String login(String username, String password) {
         loadPasswords();
         User user = validateCredentials(username, password);
         if (user != null) {
             System.out.println("User logged in");
-            //TODO: Something where we can get and validate the login of the user. Perhaps fetch or create the user object somehow.
-            String token = JWTTokenIssuer(user);
-            return token; //TODO Potentially update it with the result of the above TODO
+            return JWTTokenIssuer(user);
         } else {
-            throw new RuntimeException("Invalid username or password");
+            throw new InvalidTokenException("Invalid username or password");
         }
     }
 
+    @Override
     public void newUser(String username, String password) {
         createUser(username, password);
     }
@@ -92,19 +89,15 @@ public class AuthenticationImpl implements Authentication {
                 .sign(this.algorithm);
     }
 
-    public String getRole(String token) {
+    @Override
+    public Role getRole(String token) {
         DecodedJWT decodedJWT = validateToken(token);
-        if (decodedJWT == null) {
-            throw new RuntimeException("Invalid token");
-        }
-        return decodedJWT.getClaim("Role").asString();
+        return Role.getRole(decodedJWT.getClaim("Role").asString());
     }
 
+    @Override
     public String getUserName(String token) {
         DecodedJWT decodedJWT = validateToken(token);
-        if (decodedJWT == null) {
-            throw new RuntimeException("Invalid token");
-        }
         return decodedJWT.getClaim("UserName").asString();
     }
 
@@ -113,12 +106,10 @@ public class AuthenticationImpl implements Authentication {
             return verifier.verify(token);
         } catch (JWTVerificationException e) {
             if (e instanceof TokenExpiredException){
-                System.out.println("Token is expired");
-                client.userLogin();
+                throw new UnauthenticatedException("Token is expired");
             } else {
-                System.out.println("Invalid token: " + e.getMessage());
+                throw new InvalidTokenException("Invalid token");
             }
-            return null; // Make it call a re-login if the token has expired
         }
     }
 
@@ -156,6 +147,7 @@ public class AuthenticationImpl implements Authentication {
 
         UserDTO userDTO = encrypt(password, null);
 
+        assert userDTO != null;
         userDTO.setRole("User");
         userDTO.setName(username);
 
@@ -169,7 +161,7 @@ public class AuthenticationImpl implements Authentication {
     private Map<String, UserDTO> loadPasswords() {
         Map<String, UserDTO> users = new HashMap<>();
         try {
-            String content = new String(this.getClass().getResourceAsStream("/passwords.txt").readAllBytes(), StandardCharsets.UTF_8);
+            String content = new String(Objects.requireNonNull(this.getClass().getResourceAsStream("/passwords.txt")).readAllBytes(), StandardCharsets.UTF_8);
             JSONObject json = new JSONObject(content);
             for (String username : json.keySet()) {
                 UserDTO user = new UserDTO();
@@ -200,6 +192,7 @@ public class AuthenticationImpl implements Authentication {
 
         if(userPasswordEncrypted == null) System.out.println("Encrypted password is null");
 
+        assert userPasswordEncrypted != null;
         if (Arrays.equals(userForLogin.getPassword(), userPasswordEncrypted.getPassword())) {
             return new User(username, userForLogin.getRole());
         } else return null;
@@ -215,20 +208,10 @@ public class AuthenticationImpl implements Authentication {
             userJson.put("name", entry.getValue().getName());
             json.put(entry.getKey(), userJson);
         }
-        try (Writer writer = new FileWriter(getClass().getClassLoader().getResource("passwords.txt").getFile())) {
+        try (Writer writer = new FileWriter(Objects.requireNonNull(getClass().getClassLoader().getResource("passwords.txt")).getFile())) {
             writer.write(json.toString(4));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
-
-
-
-
-
-
-
-
 }

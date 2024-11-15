@@ -4,11 +4,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import com.dtu.printerservice.operations.PrintServer;
-import com.dtu.printerservice.users.User;
+import com.dtu.printerservice.operations.PrinterOperations;
 
 public class Servant extends UnicastRemoteObject implements RMIService {
-
-    private final PrintServer printServer;
+    private final PrinterOperations printServer;
     private String printerName;
 
     public Servant() throws RemoteException {

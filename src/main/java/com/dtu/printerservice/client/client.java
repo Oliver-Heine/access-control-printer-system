@@ -1,11 +1,12 @@
 package com.dtu.printerservice.client;
 
+import com.dtu.printerservice.authentication.Authentication;
 import com.dtu.printerservice.authentication.AuthenticationImpl;
-import com.dtu.printerservice.users.User;
+import com.dtu.printerservice.exceptions.InvalidTokenException;
+import com.dtu.printerservice.exceptions.UnauthenticatedException;
+import com.dtu.printerservice.exceptions.UnauthorizedException;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -14,7 +15,7 @@ import java.util.Scanner;
 
 public class client {
 
-    private static final AuthenticationImpl authentication = AuthenticationImpl.getInstance();
+    private static final Authentication authentication = AuthenticationImpl.getInstance();
     private static String token = null; //This represents a web cookie
 
     public static void main(String[] args) throws NotBoundException, MalformedURLException, RemoteException {
@@ -24,7 +25,6 @@ public class client {
         System.out.println("Welcome to the Print Server, how might I be of service?");
         System.out.println("You must first login to the system");
         userLogin();
-
 
         while (true) {
             System.out.println("Welcome " + authentication.getUserName(token));
@@ -40,46 +40,109 @@ public class client {
 
             switch (selection) {
                 case 1: {
-                    scanner.nextLine();
-                    System.out.println("Input filename:");
-                    String filename = scanner.nextLine();
-                    System.out.println("What printer would you like to use, Printer(1-3)?");
-                    int printer = scanner.nextInt();
-                    service.print(filename, "Printer" + printer, token);
+                    try {
+                        scanner.nextLine();
+                        System.out.println("Input filename:");
+                        String filename = scanner.nextLine();
+                        System.out.println("What printer would you like to use, Printer(1-3)?");
+                        int printer = scanner.nextInt();
+                        service.print(filename, "Printer" + printer, token);
+                    } catch (UnauthenticatedException e) {
+                    System.out.println("You must login again.");
+                    userLogin();
+                    } catch (UnauthorizedException e) {
+                        System.out.println("You do not have permission to use this operation.");
+                    }
                     break;
                 }
                 case 2: {
-                    System.out.println("Current printer status is: " + service.getState(token));
+                    try {
+                        System.out.println("Current printer status is: " + service.getState(token));
+                    } catch (UnauthenticatedException e) {
+                        System.out.println("You must login again.");
+                        userLogin();
+                    } catch (UnauthorizedException e) {
+                        System.out.println("You do not have permission to use this operation.");
+                    }
                     break;
                 }
                 case 3: {
-                    System.out.println("Stopping printer: " + service.stop(token));
+                    try {
+                        System.out.println("Stopping printer: " + service.stop(token));
+                    } catch (UnauthenticatedException e) {
+                        System.out.println("You must login again.");
+                        userLogin();
+                    } catch (UnauthorizedException e) {
+                        System.out.println("You do not have permission to use this operation.");
+                    }
                     break;
                 }
                 case 4: {
-                    System.out.println("Starting printer: " + service.start(token));
+                    try {
+                        System.out.println("Starting printer: " + service.start(token));
+                    } catch (UnauthenticatedException e) {
+                        System.out.println("You must login again.");
+                        userLogin();
+                    } catch (UnauthorizedException e) {
+                        System.out.println("You do not have permission to use this operation.");
+                    }
                     break;
                 }
                 case 5: {
-                    System.out.println("Restarting printer: " + service.restart(token));
+                    try {
+                        System.out.println("Restarting printer: " + service.restart(token));
+                    } catch (UnauthenticatedException e) {
+                        System.out.println("You must login again.");
+                        userLogin();
+                    } catch (UnauthorizedException e) {
+                        System.out.println("You do not have permission to use this operation.");
+                    }
                     break;
                 }
                 case 6: {
-                    System.out.println("Get printer queue: " + service.getQueue(token));
+                    try {
+                        System.out.println("Get printer queue: " + service.getQueue(token));
+                    } catch (UnauthenticatedException e) {
+                        System.out.println("You must login again.");
+                        userLogin();
+                    } catch (UnauthorizedException e) {
+                        System.out.println("You do not have permission to use this operation.");
+                    }
                     break;
                 }
                 case 7: {
-                    System.out.println("What file would you like to move?");
-                    String filename = scanner.nextLine();
-                    System.out.println("Moving print to top: " + service.moveToTopOfQueue(filename, 1, token));
+                    try {
+                        System.out.println("What file would you like to move?");
+                        String filename = scanner.nextLine();
+                        System.out.println("Moving print to top: " + service.moveToTopOfQueue(filename, 1, token));
+                    } catch (UnauthenticatedException e) {
+                        System.out.println("You must login again.");
+                        userLogin();
+                    } catch (UnauthorizedException e) {
+                        System.out.println("You do not have permission to use this operation.");
+                    }
                     break;
                 }
                 case 8: {
-                    System.out.println("Read config: " + service.readConfig(token));
+                    try {
+                        System.out.println("Read config: " + service.readConfig(token));
+                    } catch (UnauthenticatedException e) {
+                        System.out.println("You must login again.");
+                        userLogin();
+                    } catch (UnauthorizedException e) {
+                        System.out.println("You do not have permission to use this operation.");
+                    }
                     break;
                 }
                 case 9: {
-                    System.out.println("Set config: " + service.setConfig(token));
+                    try {
+                        System.out.println("Set config: " + service.setConfig(token));
+                    } catch (UnauthenticatedException e) {
+                        System.out.println("You must login again.");
+                        userLogin();
+                    } catch (UnauthorizedException e) {
+                        System.out.println("You do not have permission to use this operation.");
+                    }
                     break;
                 }
                 default: {
@@ -90,24 +153,26 @@ public class client {
         }
     }
 
-    public static boolean userLogin(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter username: ");
-        String username = scanner.nextLine();
-
-        if (Objects.equals(username, "8")) {
+    public static void userLogin(){
+        try {
+            Scanner scanner = new Scanner(System.in);
             System.out.print("Enter username: ");
-            username = scanner.nextLine();
-            System.out.print("Enter password: ");
-            String password = scanner.nextLine();
-            authentication.newUser(username, password);
-            token = authentication.login(username, password);
-        } else {
-            System.out.print("Enter password: ");
-            String password = scanner.nextLine();
-            token = authentication.login(username, password);
-        }
+            String username = scanner.nextLine();
 
-        return true;
+            if (Objects.equals(username, "8")) {
+                System.out.print("Enter username: ");
+                username = scanner.nextLine();
+                System.out.print("Enter password: ");
+                String password = scanner.nextLine();
+                authentication.newUser(username, password);
+                token = authentication.login(username, password);
+            } else {
+                System.out.print("Enter password: ");
+                String password = scanner.nextLine();
+                token = authentication.login(username, password);
+            }
+        } catch (InvalidTokenException e) {
+            userLogin();
+        }
     }
 }
