@@ -8,7 +8,7 @@ import java.rmi.registry.Registry;
 
 public class server {
     public static void main(String[] args) throws RemoteException {
-        Registry registry = LocateRegistry.createRegistry(5099);
+        Registry registry = LocateRegistry.createRegistry(5098);
         registry.rebind("hello", new Servant());
     }
 }

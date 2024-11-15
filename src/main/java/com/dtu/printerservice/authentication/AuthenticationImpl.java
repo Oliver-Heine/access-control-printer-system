@@ -52,9 +52,9 @@ public class AuthenticationImpl implements Authentication {
     }
 
     @Override
-    public void AuthenticateUser(Role role, String token, String action) {
+    public void AuthenticateUser(String token, String action) {
         validateToken(token);
-        if (!authorization.authorize(role, action)) {
+        if (!authorization.authorize(getUserName(token), action)) {
             throw new UnauthorizedException("User not authorized");
         }
     }

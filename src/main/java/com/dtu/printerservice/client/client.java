@@ -19,7 +19,7 @@ public class client {
     private static String token = null; //This represents a web cookie
 
     public static void main(String[] args) throws NotBoundException, MalformedURLException, RemoteException {
-        RMIService service = (RMIService) Naming.lookup("rmi://localhost:5099/hello");
+        RMIService service = (RMIService) Naming.lookup("rmi://localhost:5098/hello");
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Welcome to the Print Server, how might I be of service?");

@@ -1,0 +1,26 @@
+{
+    "Alice": {
+        "permissions": ["PRINT", "QUEUE","TOP_QUEUE", "RESTART", "READ_CONFIG", "SET_CONFIG", "STOP", "PRINT", "STATUS"]
+    },
+    "George": {
+        "permissions": ["PRINT", "STOP", "RESTART", "STATUS", "READ_CONFIG", "SET_CONFIG"]
+    },
+    "Cecilia": {
+        "permissions": ["PRINT", "STOP", "RESTART", "QUEUE", "TOP_QUEUE"]
+    },
+    "David": {
+        "permissions": ["PRINT", "QUEUE"]
+    },
+    "Erica": {
+        "permissions": ["PRINT", "QUEUE"]
+    },
+    "Fred": {
+        "permissions": ["PRINT", "QUEUE"]
+    },
+    "Henry": {
+        "permissions": ["PRINT", "QUEUE"]
+    },
+    "Ida": {
+        "permissions": ["PRINT", "STOP", "RESTART", "QUEUE", "TOP_QUEUE"]
+    }
+}
