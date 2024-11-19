@@ -3,10 +3,13 @@ package com.dtu.printerservice.client;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import com.dtu.printerservice.authentication.Authentication;
+import com.dtu.printerservice.authentication.AuthenticationImpl;
 import com.dtu.printerservice.operations.PrintServer;
 import com.dtu.printerservice.operations.PrinterOperations;
 
 public class Servant extends UnicastRemoteObject implements RMIService {
+    private static final Authentication authentication = AuthenticationImpl.getInstance();
     private final PrinterOperations printServer;
     private String printerName;
 
@@ -73,5 +76,10 @@ public class Servant extends UnicastRemoteObject implements RMIService {
     public String setConfig(String token) throws RemoteException {
         printServer.setConfig(token);
         return "Moved to top of queue";
+    }
+
+    @Override
+    public String authenticate(String username, String password) throws RemoteException {
+        return authentication.login(username, password);
     }
 }
