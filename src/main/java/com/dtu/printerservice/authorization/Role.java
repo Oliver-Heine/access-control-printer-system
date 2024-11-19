@@ -1,17 +1,15 @@
 package com.dtu.printerservice.authorization;
 
-import java.util.Set;
-
 public enum Role {
     ADMIN("ADMIN",  RolePermissions.ADMIN_PERMISSIONS),
     JANITOR("JANITOR",  RolePermissions.JANITOR_PERMISSIONS),
-    SUPERUSER("SUPERUSER",  RolePermissions.POWERUSER_PERMISSIONS),
+    SUPERUSER("SUPERUSER",  RolePermissions.SUPERRUSER_PERMISSIONS),
     BASIC("BASIC",  RolePermissions.BASIC_PERMISSIONS);
 
     private String name;
-    private final Action[] permissions;
+    private final String[] permissions;
 
-    Role(String name, Action[] permissions) {
+    Role(String name, String[] permissions) {
         this.name = name;
         this.permissions = permissions;
     }
@@ -20,7 +18,7 @@ public enum Role {
         return name;
     }
 
-    public Action[] getPermissions() {
+    public String[] getPermissions() {
         return permissions;
     }
 

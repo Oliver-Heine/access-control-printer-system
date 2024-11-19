@@ -1,0 +1,50 @@
+{
+  "roles": [
+    {
+      "ADMIN": [
+        {
+          "Permissions": [
+              "PRINT",
+              "QUEUE",
+              "TOP_QUEUE",
+              "START",
+              "STOP",
+              "RESTART",
+              "STATUS",
+              "READ_CONFIG",
+              "SET_CONFIG"
+          ]
+        }
+      ],
+      "JANITOR": [
+        {
+          "Permissions": [
+            "START",
+            "STOP",
+            "RESTART",
+            "STATUS",
+            "READ_CONFIG",
+            "SET_CONFIG"
+          ]
+        }
+      ],
+      "SUPERUSER": [
+        {
+          "Permissions": [
+            "PRINT",
+            "QUEUE",
+            "TOP_QUEUE"
+          ]
+        }
+      ],
+      "BASIC": [
+        {
+          "Permissions": [
+            "PRINT",
+            "QUEUE"
+          ]
+        }
+      ]
+    }
+  ]
+}
