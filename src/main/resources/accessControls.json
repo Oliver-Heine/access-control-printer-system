@@ -3,10 +3,10 @@
         "permissions": ["PRINT", "QUEUE","TOP_QUEUE", "RESTART", "READ_CONFIG", "SET_CONFIG", "STOP", "PRINT", "STATUS"]
     },
     "Bob": {
-        "permissions": ["PRINT", "STOP", "RESTART", "STATUS", "READ_CONFIG", "SET_CONFIG"]
+        "permissions": ["STOP", "START", "RESTART", "STATUS", "READ_CONFIG", "SET_CONFIG"]
     },
     "Cecilia": {
-        "permissions": ["PRINT", "STOP", "RESTART", "QUEUE", "TOP_QUEUE"]
+        "permissions": ["PRINT", "RESTART", "QUEUE", "TOP_QUEUE"]
     },
     "David": {
         "permissions": ["PRINT", "QUEUE"]
