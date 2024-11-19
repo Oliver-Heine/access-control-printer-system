@@ -17,4 +17,5 @@ public interface RMIService extends Remote {
     String moveToTopOfQueue(String filename, int jobID, String token) throws RemoteException;
     String readConfig(String token) throws RemoteException;
     String setConfig(String token) throws RemoteException;
+    String authenticate(String userName, String password) throws RemoteException;
 }

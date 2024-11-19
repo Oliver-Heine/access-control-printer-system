@@ -16,10 +16,23 @@ import java.util.Scanner;
 public class client {
 
     private static final Authentication authentication = AuthenticationImpl.getInstance();
+    private static final RMIService service;
+
+    static {
+        try {
+            service = (RMIService) Naming.lookup("rmi://localhost:5099/hello");
+        } catch (NotBoundException e) {
+            throw new RuntimeException(e);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static String token = null; //This represents a web cookie
 
-    public static void main(String[] args) throws NotBoundException, MalformedURLException, RemoteException {
-        RMIService service = (RMIService) Naming.lookup("rmi://localhost:5099/hello");
+    public static void main(String[] args) throws RemoteException {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Welcome to the Print Server, how might I be of service?");
@@ -158,20 +171,11 @@ public class client {
             Scanner scanner = new Scanner(System.in);
             System.out.print("Enter username: ");
             String username = scanner.nextLine();
+            System.out.print("Enter password: ");
+            String password = scanner.nextLine();
 
-            if (Objects.equals(username, "8")) {
-                System.out.print("Enter username: ");
-                username = scanner.nextLine();
-                System.out.print("Enter password: ");
-                String password = scanner.nextLine();
-                authentication.newUser(username, password);
-                token = authentication.login(username, password);
-            } else {
-                System.out.print("Enter password: ");
-                String password = scanner.nextLine();
-                token = authentication.login(username, password);
-            }
-        } catch (InvalidTokenException e) {
+            token = service.authenticate(username, password);
+        } catch (InvalidTokenException | RemoteException e) {
             userLogin();
         }
     }
