@@ -11,55 +11,55 @@ public class PrintServer implements PrinterOperations {
 
     @Override
     public void print(String filename, String printerName, String token) {
-        authentication.AuthenticateUser(authentication.getRole(token), token, "PRINT");
+        authentication.AuthenticateUser(token);
         System.out.println("print called by user: " + authentication.getUserName(token));
     }
 
     @Override
     public void queue(String printerName, String token) {
-        authentication.AuthenticateUser(authentication.getRole(token), token, "QUEUE");
+        authentication.AuthenticateUser(token);
         System.out.println("queue called by user: " + authentication.getUserName(token));
     }
 
     @Override
     public void topQueue(String printerName, int job, String token) {
-        authentication.AuthenticateUser(authentication.getRole(token), token, "TOP_QUEUE");
+        authentication.AuthenticateUser(token);
         System.out.println("topQueue called by user: " + authentication.getUserName(token));
     }
 
     @Override
     public void start(String token) {
-        authentication.AuthenticateUser(authentication.getRole(token), token, "START");
+        authentication.AuthenticateUser(token);
         System.out.println("start called by user: " + authentication.getUserName(token));
     }
 
     @Override
     public void stop(String token) {
-        authentication.AuthenticateUser(authentication.getRole(token), token, "STOP");
+        authentication.AuthenticateUser(token);
         System.out.println("stop called by user: " + authentication.getUserName(token));
     }
 
     @Override
     public void restart(String token) {
-        authentication.AuthenticateUser(authentication.getRole(token), token,  "RESTART");
+        authentication.AuthenticateUser(token);
         System.out.println("restart called by user: " + authentication.getUserName(token));
     }
 
     @Override
     public void status(String printerName, String token) {
-        authentication.AuthenticateUser(authentication.getRole(token), token, "STATUS");
+        authentication.AuthenticateUser(token);
         System.out.println("status called by user: " + authentication.getUserName(token));
     }
 
     @Override
     public void readConfig(String token) {
-        authentication.AuthenticateUser(authentication.getRole(token), token, "READ_CONFIG");
+        authentication.AuthenticateUser(token);
         System.out.println("readConfig called by user: " + authentication.getUserName(token));
     }
 
     @Override
     public void setConfig(String token) {
-            authentication.AuthenticateUser(authentication.getRole(token), token, "SET_CONFIG");
+            authentication.AuthenticateUser(token);
             System.out.println("SetConfig called by user: " + authentication.getUserName(token));
     }
 }

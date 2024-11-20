@@ -6,9 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.dtu.printerservice.authorization.Authorization;
-import com.dtu.printerservice.authorization.AuthorizationImpl;
-import com.dtu.printerservice.authorization.Role;
 import com.dtu.printerservice.exceptions.InvalidTokenException;
 import com.dtu.printerservice.exceptions.UnauthenticatedException;
 import com.dtu.printerservice.exceptions.UnauthorizedException;
@@ -37,8 +34,6 @@ public class AuthenticationImpl implements Authentication {
     private final Algorithm algorithm;
     private final JWTVerifier verifier;
 
-    private Authorization authorization = new AuthorizationImpl();
-
     public static AuthenticationImpl getInstance() {
         if (authenticationSingleton == null) {
             authenticationSingleton = new AuthenticationImpl();
@@ -52,11 +47,8 @@ public class AuthenticationImpl implements Authentication {
     }
 
     @Override
-    public void AuthenticateUser(Role role, String token, String action) {
+    public void AuthenticateUser(String token) {
         validateToken(token);
-        if (!authorization.authorize(role, action)) {
-            throw new UnauthorizedException("User not authorized");
-        }
     }
 
     @Override
@@ -84,14 +76,7 @@ public class AuthenticationImpl implements Authentication {
                 .withIssuer("printServer")
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MILLIS))
                 .withClaim("UserName", user.getName())
-                .withClaim("Role", user.getRole())
                 .sign(this.algorithm);
-    }
-
-    @Override
-    public Role getRole(String token) {
-        DecodedJWT decodedJWT = validateToken(token);
-        return Role.getRole(decodedJWT.getClaim("Role").asString());
     }
 
     @Override
@@ -119,7 +104,6 @@ public class AuthenticationImpl implements Authentication {
             random.nextBytes(salt);
         }
 
-
         byte[] hash = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
@@ -139,7 +123,6 @@ public class AuthenticationImpl implements Authentication {
         userDTO.setPassword(hash);
 
         return userDTO;
-
     }
 
     private void createUser(String username, String password) {
@@ -151,9 +134,7 @@ public class AuthenticationImpl implements Authentication {
         userDTO.setName(username);
 
         Map<String, UserDTO> passwords = loadPasswords();
-
         passwords.put(username, userDTO);
-
         savePasswords(passwords);
     }
 
@@ -166,12 +147,9 @@ public class AuthenticationImpl implements Authentication {
                 UserDTO user = new UserDTO();
 
                 JSONObject userData = json.getJSONObject(username);
-                ObjectMapper objectMapper = new ObjectMapper();
                 user.setPasswordBase64(userData.getString("password"));
                 user.setName(username);
-                user.setRole(userData.getString("role"));
                 user.setSaltBase64(userData.getString("salt"));
-                //user.setSalt(objectMapper.writeValueAsBytes(userData.getJSONArray("salt")));
 
                 users.put(username, user);
             }
@@ -193,7 +171,7 @@ public class AuthenticationImpl implements Authentication {
 
         assert userPasswordEncrypted != null;
         if (Arrays.equals(userForLogin.getPassword(), userPasswordEncrypted.getPassword())) {
-            return new User(username, userForLogin.getRole());
+            return new User(username);
         } else return null;
     }
 
